@@ -1,15 +1,5 @@
 import Foundation
 
-// MARK: - Design Tokens (mirroring style.css)
-enum AppTheme {
-    static let bg        = "#070707"
-    static let text      = "#EDEAE3"
-    static let muted     = "#706C65"
-    static let faint     = "#343230"
-    static let accent    = "#C8A352"
-    static let border    = "rgba(255,255,255,0.06)"
-}
-
 // MARK: - Data Models
 struct Project: Identifiable, Hashable {
     let id: Int
@@ -20,7 +10,7 @@ struct Project: Identifiable, Hashable {
     let imageURL: String
 }
 
-struct Service: Identifiable {
+struct Service: Identifiable, Hashable {
     let id: Int
     let number: String
     let title: String
@@ -28,13 +18,13 @@ struct Service: Identifiable {
     let price: String
 }
 
-struct FAQ: Identifiable {
+struct FAQ: Identifiable, Hashable {
     let id: Int
     let question: String
     let answer: String
 }
 
-struct ClientReview: Identifiable {
+struct ClientReview: Identifiable, Hashable {
     let id: Int
     let text: String
     let author: String
@@ -49,7 +39,7 @@ extension Project {
         Project(id: 2, number: "02", title: "Street Yourself 2",
                 tag: "Ulica", url: "https://niebiezki.myportfolio.com/",
                 imageURL: "https://cdn.myportfolio.com/c707dd54-58cb-4c19-95f2-7e640d370fe9/4ebc0e4c-2479-48c8-b3eb-d5867ee9bb5d_rwc_0x508x1365x769x1365.jpg?h=2301dc38cae991b2d07e2d0b0bf1bdf2"),
-        Project(id: 3, number: "03", title: "Rekord — Sokół · Betclic II liga",
+        Project(id: 3, number: "03", title: "Rekord — Sokoł · Betclic II liga",
                 tag: "Sport", url: "https://niebiezki.myportfolio.com/",
                 imageURL: "https://cdn.myportfolio.com/c707dd54-58cb-4c19-95f2-7e640d370fe9/0bf760d5-d0ef-4a40-9062-1af3265fad7e_rwc_0x305x1638x923x1638.jpg?h=b8da8e5156b530baed52a416b1b99727"),
         Project(id: 4, number: "04", title: "PSK 2026 — Inauguracja",
@@ -88,7 +78,7 @@ extension FAQ {
         FAQ(id: 2, question: "Czy wyjeżdżasz poza Bielsko-Białą?",
             answer: "Tak — pracuję na Śląsku i w całej Polsce. Dojazd poza aglomerację wliczam w wycenę lub ustalamy indywidualnie."),
         FAQ(id: 3, question: "W jakim formacie dostarczasz pliki?",
-            answer: "Zdjęcia dostarczam jako JPG w wysokiej rozdzielczości, gotowe do druku i social mediów. Na życzenie również TIFF lub RAW."),
+            answer: "Zdjęcia dostarczam jako JPG w wysokiej rozdzielczości, gotowe do druku i social mediów. Na żądanie również TIFF lub RAW."),
         FAQ(id: 4, question: "Ile zdjęć wchodzi w pakiet?",
             answer: "Przy evencie od 80 do 200+ gotowych ujęć, przy sesji portretowej 20–40. Szczegóły ustalamy przed realizacją."),
         FAQ(id: 5, question: "Jak wygląda rezerwacja terminu?",

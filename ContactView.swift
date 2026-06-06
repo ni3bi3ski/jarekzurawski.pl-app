@@ -5,9 +5,21 @@ struct ContactView: View {
     @State private var email = ""
     @State private var message = ""
     @State private var showConfirmation = false
+    @State private var emailError = false
     @FocusState private var focusedField: ContactField?
 
     enum ContactField { case name, email, message }
+
+    private var isEmailValid: Bool {
+        let pattern = #"^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$"#
+        return email.range(of: pattern, options: .regularExpression) != nil
+    }
+
+    private var canSend: Bool {
+        !name.trimmingCharacters(in: .whitespaces).isEmpty &&
+        isEmailValid &&
+        !message.trimmingCharacters(in: .whitespaces).isEmpty
+    }
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -68,17 +80,29 @@ struct ContactView: View {
                     .submitLabel(.next)
                     .onSubmit { focusedField = .email }
 
-                    AppTextField(
-                        label: "Adres email",
-                        placeholder: "jan@firma.pl",
-                        text: $email
-                    )
-                    .focused($focusedField, equals: .email)
-                    .keyboardType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-                    .submitLabel(.next)
-                    .onSubmit { focusedField = .message }
+                    VStack(alignment: .leading, spacing: 4) {
+                        AppTextField(
+                            label: "Adres email",
+                            placeholder: "jan@firma.pl",
+                            text: $email
+                        )
+                        .focused($focusedField, equals: .email)
+                        .keyboardType(.emailAddress)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
+                        .submitLabel(.next)
+                        .onSubmit { focusedField = .message }
+                        .onChange(of: email) { _ in
+                            if emailError { emailError = false }
+                        }
+
+                        if emailError {
+                            Text("Podaj prawidłowy adres email")
+                                .font(.appMeta)
+                                .foregroundColor(.red.opacity(0.8))
+                                .transition(.opacity)
+                        }
+                    }
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Wiadomość")
@@ -99,6 +123,18 @@ struct ContactView: View {
                     }
 
                     Button {
+                        guard isEmailValid else {
+                            withAnimation { emailError = true }
+                            return
+                        }
+                        // Open mailto as actual send mechanism
+                        let subject = "Zapytanie od \(name)"
+                        let body = message
+                        let encodedSubject = subject.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                        let encodedBody = body.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+                        if let url = URL(string: "mailto:kontakt@jarekzurawski.pl?subject=\(encodedSubject)&body=\(encodedBody)") {
+                            UIApplication.shared.open(url)
+                        }
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                             showConfirmation = true
                             name = ""
@@ -115,7 +151,7 @@ struct ContactView: View {
                             if showConfirmation {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 16, weight: .semibold))
-                                Text("Wysłano!")
+                                Text("Otwarto klienta pocztowego")
                                     .font(.system(size: 15, weight: .semibold))
                             } else {
                                 Text("Wyślij wiadomość")
@@ -132,8 +168,9 @@ struct ContactView: View {
                         )
                         .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
-                    .disabled(name.isEmpty || email.isEmpty || message.isEmpty)
-                    .opacity(name.isEmpty || email.isEmpty || message.isEmpty ? 0.5 : 1)
+                    .disabled(!canSend)
+                    .opacity(canSend ? 1 : 0.5)
+                    .animation(.easeInOut(duration: 0.2), value: canSend)
                 }
                 .padding(.horizontal, 24)
 

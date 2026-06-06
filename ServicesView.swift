@@ -156,10 +156,11 @@ struct FAQRow: View {
                         .foregroundColor(.appText)
                         .multilineTextAlignment(.leading)
                     Spacer()
-                    Image(systemName: isExpanded ? "minus" : "plus")
-                        .font(.system(size: 14, weight: .medium))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.appAccent)
-                        .rotationEffect(.degrees(isExpanded ? 0 : 0))
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                        .animation(.spring(response: 0.35, dampingFraction: 0.8), value: isExpanded)
                 }
                 .padding(.vertical, 16)
             }

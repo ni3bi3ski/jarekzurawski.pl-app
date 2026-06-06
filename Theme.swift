@@ -23,25 +23,24 @@ extension Color {
 
 // MARK: - App Color Palette
 extension Color {
-    static let appBG     = Color(hex: "#070707")
-    static let appText   = Color(hex: "#EDEAE3")
-    static let appMuted  = Color(hex: "#706C65")
-    static let appFaint  = Color(hex: "#343230")
-    static let appAccent = Color(hex: "#C8A352")
-    static let appBorder = Color.white.opacity(0.06)
-    static let appSurface = Color(hex: "#111010")
+    static let appBG       = Color(hex: "#070707")
+    static let appText     = Color(hex: "#EDEAE3")
+    static let appMuted    = Color(hex: "#706C65")
+    static let appFaint    = Color(hex: "#343230")
+    static let appAccent   = Color(hex: "#C8A352")
+    static let appBorder   = Color.white.opacity(0.06)
+    static let appSurface  = Color(hex: "#111010")
     static let appSurface2 = Color(hex: "#161514")
 }
 
 // MARK: - Typography
 extension Font {
-    // Using system fonts that approximate Satoshi character
-    static let appHero = Font.system(size: 52, weight: .black, design: .default)
-    static let appTitle = Font.system(size: 28, weight: .bold, design: .default)
+    static let appHero    = Font.system(size: 52, weight: .black, design: .default)
+    static let appTitle   = Font.system(size: 28, weight: .bold, design: .default)
     static let appSection = Font.system(size: 22, weight: .semibold, design: .default)
-    static let appBody = Font.system(size: 16, weight: .regular, design: .default)
-    static let appMeta = Font.system(size: 12, weight: .medium, design: .default)
-    static let appLabel = Font.system(size: 11, weight: .medium, design: .default)
+    static let appBody    = Font.system(size: 16, weight: .regular, design: .default)
+    static let appMeta    = Font.system(size: 12, weight: .medium, design: .default)
+    static let appLabel   = Font.system(size: 11, weight: .medium, design: .default)
 }
 
 // MARK: - Text Modifiers
@@ -68,4 +67,35 @@ struct AccentLabelStyle: ViewModifier {
 extension View {
     func labelStyle() -> some View { modifier(LabelStyle()) }
     func accentLabelStyle() -> some View { modifier(AccentLabelStyle()) }
+}
+
+// MARK: - Shimmer Modifier (shared)
+struct ShimmerModifier: ViewModifier {
+    @State private var phase: CGFloat = 0
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                LinearGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: .clear, location: phase - 0.3),
+                        .init(color: Color.white.opacity(0.06), location: phase),
+                        .init(color: .clear, location: phase + 0.3),
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+            )
+            .onAppear {
+                withAnimation(.linear(duration: 1.5).repeatForever(autoreverses: false)) {
+                    phase = 1.5
+                }
+            }
+    }
+}
+
+extension View {
+    func shimmer() -> some View {
+        modifier(ShimmerModifier())
+    }
 }
